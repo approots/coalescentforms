@@ -1,0 +1,24 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.textField({
+first:        true,
+label:        "To Email"|t,
+id:           'toEmail',
+name:         'toEmail',
+instructions: "The email address(es) that the contact form will send to. Separate multiple email addresses with commas."|t,
+value:        settings.toEmail,
+autofocus:    true,
+errors:       settings.getErrors('toEmail')
+}) }}
+
+{{ forms.textField({
+first:        false,
+label:        "Subject"|t,
+id:           'subject',
+name:         'subject',
+instructions: "The email subject"|t,
+value:        settings.subject,
+autofocus:    false,
+errors:       settings.getErrors('subject')
+}) }}
+
