@@ -104,16 +104,13 @@ class CoalescentFormsService extends BaseApplicationComponent
         $settings = craft()->plugins->getPlugin('coalescentforms')->getSettings();
         $emailRecipients = array();
         $emailSubject = "Form Submission";
-        $emailSettings = craft()->email->getSettings();
 
         if ($formEmailRecipients) {
             $emailRecipients = ArrayHelper::stringToArray($formEmailRecipients);
-        } else if ($settings->toEmail) {
-            $emailRecipients = ArrayHelper::stringToArray($settings->toEmail);
-        } else {
-            $emailRecipients[] = $emailSettings['emailAddress'];
         }
-
+        if ($settings->toEmail) {
+            $emailRecipients = array_merge(ArrayHelper::stringToArray($settings->toEmail), $emailRecipients);
+        }
         // No duplicate email addresses
         $emailRecipients = array_unique($emailRecipients);
 
@@ -129,6 +126,7 @@ class CoalescentFormsService extends BaseApplicationComponent
         {
 
             $email = new EmailModel();
+            $emailSettings = craft()->email->getSettings();
 
             $email->fromEmail = $emailSettings['emailAddress'];
             $email->replyTo   = $emailSettings['emailAddress'];
