@@ -13,4 +13,8 @@ return array(
             'comments' => 'Comments',
         )
     ),
+    'Footer Optin Form' => array(
+        'fields' => array(
+        )
+    ),
 );
