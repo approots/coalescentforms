@@ -100,7 +100,7 @@ class CoalescentFormsController extends BaseController
                 $customFormFields[$key] = craft()->request->getPost($key);
             }
 
-            $formFields['fields'] = $customFormFields; //json_encode($customFormFields);
+            $formFields['fields'] = $customFormFields;
             // create the form model
             $formModel = craft()->coalescentForms->newFormsModel($formFields);
             // save the form
@@ -121,7 +121,6 @@ class CoalescentFormsController extends BaseController
                 // failure // Post back with flash error which can be printed (or checked for) in the template:
                 craft()->userSession->setFlash('error', Craft::t('There was an error saving the form.'));
             }
-
         } else {
             // Post back with flash error which can be printed (or checked for) in the template:
             craft()->userSession->setFlash('error', Craft::t('Form type not supported.'));

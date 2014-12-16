@@ -19,7 +19,7 @@ class CoalescentFormsRecord extends BaseRecord
             'firstName'   => array(AttributeType::String),
             'lastName'   => array(AttributeType::String),
             'email'   => array(AttributeType::Email),
-            'fields'  => array(AttributeType::Mixed,  'required' => true),
+            'fields'  => array(AttributeType::Mixed),
         );
     }
     /**

@@ -50,7 +50,13 @@
 
             {% for row in forms %}
                 <tr>
-                    <td><a href="#" class="toggle-extraFields formType">{{row.formType}}</a></td>
+                    <td>
+                        {% if row.fields %}
+                            <a href="#" class="toggle-extraFields formType">{{row.formType}}</a>
+                        {% else %}
+                            <span class="formType">{{row.formType}}</span>
+                        {% endif %}
+                    </td>
                     <td>{{row.dateCreated}}</td>
                     <td>{{row.firstName}}</td>
                     <td>{{row.lastName}}</td>

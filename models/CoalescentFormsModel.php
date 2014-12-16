@@ -13,7 +13,7 @@ class CoalescentFormsModel extends BaseModel
             'firstName'   => array(AttributeType::String, 'label' => 'First Name'),
             'lastName'   => array(AttributeType::String, 'label' => 'Last Name'),
             'email'   => array(AttributeType::Email, 'label' => 'Email'),
-            'fields'  => array(AttributeType::Mixed,  'required' => true, 'label' => 'Fields'),
+            'fields'  => array(AttributeType::Mixed, 'label' => 'Fields'),
         );
     }
 }
