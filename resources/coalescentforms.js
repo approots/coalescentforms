@@ -13,7 +13,7 @@
         var filter = [];
         var selected = $(this).val();
 
-        // TODO Currently hiding all extra field rows when formType changed for simplicity.
+        // Currently hiding all extra field rows when formType changed for simplicity.
         // Ideally, we just hide the extra fields of the formTypes not displayed.
         $('tr.extraFields').hide();
 
@@ -65,6 +65,7 @@
          });
     });
 
+    // TODO form name vs form type
     var updateFormDropDowns = function() {
         var formTypes = [];
 
@@ -110,7 +111,7 @@
                     .text(value));
         });
 
-    }
+    };
 
     var arrayUnique = function(a) {
         return a.reduce(function(p, c) {

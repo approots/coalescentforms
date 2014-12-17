@@ -29,11 +29,12 @@ class CoalescentFormsController extends BaseController
         $titleLine = 'Date,First Name,Last Name,Email';
         $fieldLine = '';
         $fileName = '';
+        // TODO form name instead?
         $formType = craft()->request->getPost('csv');
+        // TODO need form type here, but should save as form name?
         $forms = craft()->coalescentForms->getFormsByType($formType);
 
         if ($forms) {
-
 
             foreach ($forms as $form) {
                 $fieldLine = $this->_encodeCSVField($form['dateUpdated']);
@@ -44,6 +45,7 @@ class CoalescentFormsController extends BaseController
                 // Extra fields specific to this form.
                 foreach ($form['fields'] as $key => $value) {
                     if (! $addedTitles) {
+                        // TODO write form field labels instead of keys
                         $titleLine .= ',' . $key;
                     }
                     $fieldLine .= ',' . $this->_encodeCSVField($value);

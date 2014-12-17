@@ -4,6 +4,7 @@ namespace Craft;
 class CoalescentFormsService extends BaseApplicationComponent
 {
     protected $coalescentFormsRecord;
+    private $config;
 
     public function __construct($coalescentFormsRecord = null)
     {
@@ -43,6 +44,31 @@ class CoalescentFormsService extends BaseApplicationComponent
     {
         $records = $this->coalescentFormsRecord->findAll(array('order'=>'t.dateUpdated DESC, t.formType'));
         return CoalescentFormsModel::populateModels($records);
+    }
+
+    /**
+     * TODO maybe just return the main config array as-is unless we add anything to that config array in the future?
+     * This method is currently redundant.
+     * @return array
+     */
+    public function getConfig()
+    {
+        if (! $this->config) {
+            $this->config = require dirname(dirname(__FILE__)) . '/config/main.php';
+        }
+        return $this->config;
+        /*
+        $fieldLabels = array();
+        $mainConfig = require dirname(dirname(__FILE__)) . '/config/main.php';
+        foreach ($mainConfig as $formType => $values) {
+            $fieldLabels[$formType] = array();
+            foreach ($values['fields'] as $valueKey => $valueLabel) {
+                $fieldLabels[$formType][$valueKey] = $valueLabel;
+            }
+        }
+
+        return $fieldLabels;
+        */
     }
 
     public function getFormById($id)
@@ -142,7 +168,7 @@ class CoalescentFormsService extends BaseApplicationComponent
 
     private function _formattedEmailMessage($formFields)
     {
-        $mainConfig = require dirname(dirname(__FILE__)) . '/config/main.php';
+        $mainConfig = $this->getConfig();
         $configFields = $mainConfig[$formFields['formType']]['fields'];
         $message = '';
         $formsModel = $this->newFormsModel($formFields);
