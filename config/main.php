@@ -17,4 +17,10 @@ return array(
         'fields' => array(
         )
     ),
+    'Sidebar Form' => array(
+        'fields' => array(
+            'phone' => 'Phone',
+            'optin' => 'Opt-in Checkbox',
+        )
+    ),
 );
