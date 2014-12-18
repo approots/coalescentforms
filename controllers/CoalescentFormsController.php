@@ -47,7 +47,6 @@ class CoalescentFormsController extends BaseController
                 // Extra fields specific to this form.
                 foreach ($form['fields'] as $key => $value) {
                     if (! $addedTitles) {
-                        // TODO write form field labels instead of keys
                         $label = ($labels[$key]) ? $labels[$key] : $key;
                         $titleLine .= ',' . $label;
                     }

@@ -72,7 +72,6 @@
          });
     });
 
-    // TODO form name vs form type
     var updateFormDropDowns = function() {
         var formNames = [];
         var unique = [];
@@ -121,7 +120,6 @@
             .text("View All Forms"));
 
         $.each(formNames, function(key, value) {
-            // TODO verify that Twig is set to auto escape otherwise there could be an issue putting user defined strings in html attributes.
             var option = '<option data-formtype="' + value.formType + '" value="' + value.formName + '">' + value.formName + '</option>';
             $formNameDropDown.append(option);
             $csvDropDown.append(option);
