@@ -20,7 +20,7 @@ class CoalescentFormsService extends BaseApplicationComponent
         $model->setAttributes($attributes);
         return $model;
     }
-
+/*
     public function getFormTypes()
     {
         $formType = null;
@@ -39,10 +39,12 @@ class CoalescentFormsService extends BaseApplicationComponent
 
         return $formTypes;
     }
+*/
 
     public function getAllForms()
     {
-        $records = $this->coalescentFormsRecord->findAll(array('order'=>'t.dateUpdated DESC, t.formType'));
+        //$records = $this->coalescentFormsRecord->findAll(array('order'=>'t.dateUpdated DESC, t.formType'));
+        $records = $this->coalescentFormsRecord->findAll(array('order'=>'t.dateUpdated DESC'));
         return CoalescentFormsModel::populateModels($records);
     }
 
@@ -71,6 +73,79 @@ class CoalescentFormsService extends BaseApplicationComponent
         */
     }
 
+    public function getFormFieldLabels($formType = null)
+    {
+        $fieldLabels = array();
+        $mainConfig = $this->getConfig();
+
+        if ($formType) {
+            // just get labels for this form type
+            if (($mainConfig[$formType]) && ($mainConfig[$formType]['fields'])) {
+                $fieldLabels = $this->_getFieldLabels($mainConfig[$formType]['fields']);
+            }
+        } else {
+            // get labels indexed by formType
+            foreach ($mainConfig as $formType => $values) {
+                if (($mainConfig[$formType]) && ($mainConfig[$formType]['fields'])) {
+                    $fieldLabels[$formType] = $this->_getFieldLabels($mainConfig[$formType]['fields']);
+                }
+            }
+        }
+
+        return $fieldLabels;
+        /*
+        foreach ($mainConfig as $formType => $values) {
+            $fieldLabels[$formType] = array();
+
+            foreach ($values['fields'] as $fieldsKey => $fieldsValue) {
+                if (! empty($fieldsValue)) {
+                    if (is_array($fieldsValue)) {
+                        // Try to find and use the label field in the array
+                        if ($fieldsValue['label']) {
+                            $fieldLabels[$formType][$fieldsKey] = $fieldsValue['label'];
+                        }
+                    } else if ($fieldsValue) {
+                        // The field value is a string. Use it as the label.
+                        $fieldLabels[$formType][$fieldsKey] = $fieldsValue;
+                    }
+                }
+
+                // Couldn't find a label for this field, so use the field key.
+                if (! isset($fieldLabels[$formType][$fieldsKey])) {
+                    $fieldLabels[$formType][$fieldsKey] = $fieldsKey;
+                }
+            }
+
+        }
+            */
+    }
+
+    private function _getFieldLabels(array $fields)
+    {
+        $fieldLabels = array();
+
+        foreach ($fields as $fieldsKey => $fieldsValue) {
+            if (! empty($fieldsValue)) {
+                if (is_array($fieldsValue)) {
+                    // Try to find and use the label field in the array
+                    if ($fieldsValue['label']) {
+                        $fieldLabels[$fieldsKey] = $fieldsValue['label'];
+                    }
+                } else if ($fieldsValue) {
+                    // The field value is a string. Use it as the label.
+                    $fieldLabels[$fieldsKey] = $fieldsValue;
+                }
+            }
+
+            // Couldn't find a label for this field, so use the field key.
+            if (! isset($fieldLabels[$fieldsKey])) {
+                $fieldLabels[$fieldsKey] = $fieldsKey;
+            }
+        }
+
+        return $fieldLabels;
+    }
+
     public function getFormById($id)
     {
         if ($record = $this->coalescentFormsRecord->findByPk($id)) {
@@ -85,6 +160,21 @@ class CoalescentFormsService extends BaseApplicationComponent
         $records = $this->coalescentFormsRecord->findAll(array(
             'condition'=>'formType=:formType',
             'params'=>array(':formType'=>$formType),
+            'order'=>'t.dateUpdated DESC'
+        ));
+
+        if ($records) {
+            return CoalescentFormsModel::populateModels($records);
+        }
+
+        return null;
+    }
+
+    public function getFormsByTypeAndName($formType, $formName)
+    {
+        $records = $this->coalescentFormsRecord->findAll(array(
+            'condition'=>'formType=:formType AND formName=:formName',
+            'params'=>array(':formType'=>$formType, ':formName'=>$formName),
             'order'=>'t.dateUpdated DESC'
         ));
 
@@ -133,9 +223,8 @@ class CoalescentFormsService extends BaseApplicationComponent
 
         if ($formEmailRecipients) {
             $emailRecipients = ArrayHelper::stringToArray($formEmailRecipients);
-        }
-        if ($settings->toEmail) {
-            $emailRecipients = array_merge(ArrayHelper::stringToArray($settings->toEmail), $emailRecipients);
+        } else if ($settings->toEmail) {
+            $emailRecipients = ArrayHelper::stringToArray($settings->toEmail);
         }
         // No duplicate email addresses
         $emailRecipients = array_unique($emailRecipients);
@@ -150,7 +239,6 @@ class CoalescentFormsService extends BaseApplicationComponent
 
         foreach ($emailRecipients as $toEmail)
         {
-
             $email = new EmailModel();
             $emailSettings = craft()->email->getSettings();
 
@@ -168,8 +256,7 @@ class CoalescentFormsService extends BaseApplicationComponent
 
     private function _formattedEmailMessage($formFields)
     {
-        $mainConfig = $this->getConfig();
-        $configFields = $mainConfig[$formFields['formType']]['fields'];
+        $extraFieldLabels = $this->getFormFieldLabels($formFields['formType']);
         $message = '';
         $formsModel = $this->newFormsModel($formFields);
         $labels = $formsModel->attributeLabels();
@@ -178,12 +265,10 @@ class CoalescentFormsService extends BaseApplicationComponent
         foreach ($formFields as $key => $value) {
             if ($key === 'fields') {
                 foreach ($value as $extraKey => $extraValue) {
-                    if ($configFields[$extraKey]) {
-                        $extraKey = $configFields[$extraKey];
-                    }
+                    $extraKey = ($extraFieldLabels[$extraKey]) ? $extraFieldLabels[$extraKey] : $extraKey;
                     $message .= $extraKey . ': ' . $extraValue . "\n\n";
                 }
-            } else {
+            } elseif ($key !== 'formType') {
                 $label = ($labels[$key]) ? $labels[$key] : $key;
                 $message .= $label . ': ' . $value . "\n\n";
             }

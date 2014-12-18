@@ -29,10 +29,12 @@ class CoalescentFormsController extends BaseController
         $titleLine = 'Date,First Name,Last Name,Email';
         $fieldLine = '';
         $fileName = '';
-        // TODO form name instead?
-        $formType = craft()->request->getPost('csv');
-        // TODO need form type here, but should save as form name?
-        $forms = craft()->coalescentForms->getFormsByType($formType);
+        $label = null;
+
+        $formName = craft()->request->getPost('formName');
+        $formType = craft()->request->getPost('formType');
+        $labels = craft()->coalescentForms->getFormFieldLabels($formType);
+        $forms = craft()->coalescentForms->getFormsByTypeAndName($formType, $formName);
 
         if ($forms) {
 
@@ -46,7 +48,8 @@ class CoalescentFormsController extends BaseController
                 foreach ($form['fields'] as $key => $value) {
                     if (! $addedTitles) {
                         // TODO write form field labels instead of keys
-                        $titleLine .= ',' . $key;
+                        $label = ($labels[$key]) ? $labels[$key] : $key;
+                        $titleLine .= ',' . $label;
                     }
                     $fieldLine .= ',' . $this->_encodeCSVField($value);
                 }
@@ -59,7 +62,7 @@ class CoalescentFormsController extends BaseController
                 $csv[] = $fieldLine;
             }
 
-            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $formType);
+            $fileName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $formName);
             $fileName .= '.csv';
 
             craft()->request->sendFile($fileName, implode("\n", $csv), array('forceDownload' => true));
@@ -81,31 +84,43 @@ class CoalescentFormsController extends BaseController
     public function actionSaveForm()
     {
         $this->requirePostRequest();
+        $formField = null;
         $formFields = array();
         $customFormFields = array();
         $formModel = null;
-        $mainConfig = require dirname(dirname(__FILE__)) . '/config/main.php';
+        $mainConfig = craft()->coalescentForms->getConfig(); //require dirname(dirname(__FILE__)) . '/config/main.php';
         $formType = craft()->request->getPost('formType');
 
         // Get the custom fields from the config
         if (isset($mainConfig[$formType])) {
-
             // Get the standard form fields
             $formFields['formType'] = $formType;
+            $formFields['formName'] = craft()->request->getPost('formName');
+            if (empty($formFields['formName'])) {
+                $formFields['formName'] = $formFields['formType'];
+            }
             $formFields['firstName'] = craft()->request->getPost('firstName');
             $formFields['lastName'] = craft()->request->getPost('lastName');
             $formFields['email'] = craft()->request->getPost('email');
 
             $configFields = $mainConfig[$formType]['fields'];
             foreach($configFields as $key => $value) {
+                $formField = craft()->request->getPost($key);
+
+                // Support for default values if no form value sent. Useful for unchecked checkboxes.
+                if (empty($formField) && is_array($value) && isset($value['default'])) {
+                    $formField = $value['default'];
+                }
+
                 // add this to an array
-                $customFormFields[$key] = craft()->request->getPost($key);
+                $customFormFields[$key] = $formField;
             }
 
             $formFields['fields'] = $customFormFields;
             // create the form model
             $formModel = craft()->coalescentForms->newFormsModel($formFields);
             // save the form
+
             if (craft()->coalescentForms->saveForm($formModel)) {
 
                 // Send email(s)

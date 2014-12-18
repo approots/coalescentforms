@@ -8,6 +8,7 @@ class CoalescentFormsModel extends BaseModel
         return array(
             'id'    => array(AttributeType::Number, 'label' => 'Id'),
             'formType'   => array(AttributeType::String, 'label' => 'Form Type'),
+            'formName'   => array(AttributeType::String, 'label' => 'Form Name'),
             'dateCreated'   => array(AttributeType::String, 'label' => 'Date'),
             'dateUpdated'   => array(AttributeType::String, 'label' => 'Date'),
             'firstName'   => array(AttributeType::String, 'label' => 'First Name'),

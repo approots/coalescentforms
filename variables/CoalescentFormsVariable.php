@@ -9,16 +9,17 @@ class CoalescentFormsVariable
         return craft()->coalescentForms->getAllForms();
     }
 
-    public function getFormConfig()
+    public function getFormFieldLabels()
     {
         // Form field labels by field key, label value all indexed by formType
-        return craft()->coalescentForms->getConfig();
+        return craft()->coalescentForms->getFormFieldLabels();
     }
-
+/*
     public function getFormTypes()
     {
         return craft()->coalescentForms->getFormTypes();
     }
+*/
 /*
     public function getFormsData()
     {

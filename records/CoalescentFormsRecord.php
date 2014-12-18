@@ -14,8 +14,10 @@ class CoalescentFormsRecord extends BaseRecord
      */
     public function defineAttributes()
     {
+        // formType and formName may be the same. formType is used to lookup form fields keys in the config/main.php.
         return array(
             'formType'   => array(AttributeType::String, 'required' => true),
+            'formName'   => array(AttributeType::String, 'required' => true),
             'firstName'   => array(AttributeType::String),
             'lastName'   => array(AttributeType::String),
             'email'   => array(AttributeType::Email),

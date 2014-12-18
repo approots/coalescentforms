@@ -5,11 +5,12 @@
          widgets: ["filter"],
          widgetOptions : {
              filter_columnFilters : false,
-             filter_childRows : false
+             filter_childRows : false,
+             filter_functions : { 0: true } // necessary to get exact matching for form name select dropdown on the first column
          }
      });
 
-    $('#formTypeDropDown').on('change', function() {
+    $('#formNameDropDown').on('change', function() {
         var filter = [];
         var selected = $(this).val();
 
@@ -30,6 +31,12 @@
     $("a.toggle-extraFields").on("click", function(e) {
         e.preventDefault();
         $(this).closest("tr").next().toggle();
+    });
+
+    $( "#csvForm" ).submit(function( event ) {
+        var $selectedOption = $('#csvDropDown').find(":selected");
+        $('#csvFormType').val($selectedOption.data('formtype'));
+        return;
     });
 
     $('a.deleteForm').on('click', function(e) {
@@ -67,16 +74,24 @@
 
     // TODO form name vs form type
     var updateFormDropDowns = function() {
-        var formTypes = [];
+        var formNames = [];
+        var unique = [];
 
         // Loop through all form type columns and create an array of unique form names
         $('.formType').each(function() {
-            var formType = $(this).text();//('formType');
-            formTypes.push(formType);
+            var formName = $(this).text();
+            var formType = $(this).data('formtype');
+            var key = formName + '::' + formType; // unique key
+
+            // If this unique form key hasn't been added yet...
+            if (unique.indexOf(key) === -1) {
+                unique.push(key);
+                formNames.push({formName:formName,formType:formType});
+            }
         });
 
         // If no form types, then no data! Don't display the form fields and table.
-        if (formTypes.length) {
+        if (formNames.length) {
             $('div.formsDataTrue').show();
             $('div.formsDataFalse').hide();
         } else {
@@ -84,43 +99,37 @@
             $('div.formsDataFalse').show();
         }
 
-        formTypes = arrayUnique(formTypes);
-        formTypes = formTypes.sort();
+        // Sort by form name
+        formNames.sort(function(a,b) {
+            return (a.formName > b.formName) ? 1 : ((b.formName > a.formName) ? -1 : 0);
+        });
 
-        $('#formTypeDropDown')
+        // Remove all options before rebuilding
+        var $formNameDropDown = $('#formNameDropDown');
+        var $csvDropDown = $('#csvDropDown');
+        $formNameDropDown
+            .find('option')
+            .remove()
+            .end();
+        $csvDropDown
             .find('option')
             .remove()
             .end();
 
-        $('#formTypeDropDown').append($("<option></option>")
+        $formNameDropDown.append($("<option></option>")
             .attr("value","")
             .text("View All Forms"));
 
-        $('#csvDropDown')
-            .find('option')
-            .remove()
-            .end();
-
-        $.each(formTypes, function(key, value) {
-            $('#formTypeDropDown').append($("<option></option>")
-                    .attr("value",value)
-                    .text(value));
-            $('#csvDropDown')
-                .append($("<option></option>")
-                    .attr("value",value)
-                    .text(value));
+        $.each(formNames, function(key, value) {
+            // TODO verify that Twig is set to auto escape otherwise there could be an issue putting user defined strings in html attributes.
+            var option = '<option data-formtype="' + value.formType + '" value="' + value.formName + '">' + value.formName + '</option>';
+            $formNameDropDown.append(option);
+            $csvDropDown.append(option);
         });
 
     };
 
-    var arrayUnique = function(a) {
-        return a.reduce(function(p, c) {
-            if (p.indexOf(c) < 0) p.push(c);
-            return p;
-        }, []);
-    };
-
-    // initialize the form type dropdowns
+    // initialize the form name/type dropdowns
     updateFormDropDowns();
 }());
 

@@ -20,7 +20,7 @@ return array(
     'Sidebar Form' => array(
         'fields' => array(
             'phone' => 'Phone',
-            'optin' => 'Opt-in Checkbox',
+            'optin' => array('label' => 'Opt-in Checkbox', 'default' => 'No'),
         )
     ),
 );
