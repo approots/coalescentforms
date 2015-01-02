@@ -23,4 +23,13 @@ return array(
             'optin' => array('label' => 'Opt-in Checkbox', 'default' => 'No'),
         )
     ),
+    'Contact Form' => array(
+        'fields' => array(
+            'company' => 'Company',
+            'phone' => 'Phone',
+            'enquiryAbout' => 'My enquiry is about',
+            'comments' => 'Comments',
+            'optinContact' => array('label' => 'Opt-in Checkbox', 'default' => 'No'),
+        )
+    ),
 );
