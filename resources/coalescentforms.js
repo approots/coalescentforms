@@ -31,6 +31,7 @@
     $("a.toggle-extraFields").on("click", function(e) {
         e.preventDefault();
         $(this).closest("tr").next().toggle();
+        $(this).parent().parent().toggleClass('open');
     });
 
     $( "#csvForm" ).submit(function( event ) {

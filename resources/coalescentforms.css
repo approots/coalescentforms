@@ -13,54 +13,64 @@ div.formsDataFalse  {
 table.tablesorter tr.extraFields {
     display: none;
 }
-
-/* Generic table styling. Should probably define for specific table. Have at it, Mike! */
-table {
-    background:#fff;
-    max-width:100%;
-    border-spacing:0;
-    width:100%;
-    margin:10px 0;
-    border:1px solid #ddd;
-    border-collapse:separate;
-    *border-collapse:collapsed;
-    -webkit-box-shadow:0 0 4px rgba(0,0,0,0.10);
-    -moz-box-shadow:0 0 4px rgba(0,0,0,0.10);
-    box-shadow:0 0 4px rgba(0,0,0,0.10);
+table.tablesorter {
+    margin: 20px 0 0 0;
+    clear: both;
 }
-table th,
-table td {
-    padding:8px;
-    line-height:18px;
-    text-align:left;
-    border-top:1px solid #ddd;
+.tablesorter-headerAsc, .tablesorter-headerDesc {
+	color: #000;
 }
-table th {
-    background:#eee;
-    background:-webkit-gradient(linear, left top, left bottom, from(#f6f6f6), to(#eee));
-    background:-moz-linear-gradient(top, #f6f6f6, #eee);
-    text-shadow:0 1px 0 #fff;
-    font-weight:bold;
-    vertical-align:bottom;
+.tablesorter-header {
+	cursor: pointer !important;
 }
-table td {
-    vertical-align:top;
+.extraFieldsCell {
+	padding: 0 !important;
 }
-table thead:first-child tr th,
-table thead:first-child tr td {
-    border-top:0;
+table.extraFields {
+	display: table;
+	width: 100%;
+	background: #fcfcfc;
+	clear: both;
 }
-table tbody + tbody {
-    border-top:2px solid #ddd;
+table.extraFields td {
+	padding: 6px 4px !important;
+	font-size: 90%;
 }
-table th + th,
-table td + td,
-table th + td,
-table td + th {
-    border-left:1px solid #ddd;
+table.extraFields td.label {
+	font-weight: bold;
+	width: 15%;
 }
-table thead:first-child tr:first-child th,
-table tbody:first-child tr:first-child th,
-table tbody:first-child tr:first-child td {
-    border-top:0;
+table.extraFields td:first-child {
+	border-left: 3px solid rgba(115, 127, 140, 0.15);
+}
+table.extraFields tr:first-child td {
+	border-top: none !important;
+}
+table.extraFields tr:last-child td {
+	border-bottom: none !important;
+}
+tr.open {
+	background: #fcfcfc;
+}
+table.data tbody tr td:first-child {
+	padding-left: 7px !important;
+}
+tr.open td:first-child {
+	border-left: 3px solid rgba(115, 127, 140, 0.15);
+	padding-left: 4px !important;
+}
+.formSelect {
+	float: left;
+	margin-bottom: 20px;
+}
+#csvForm {
+	float: right;
+	margin-bottom: 20px;
+}
+#csvForm label {
+	font-size: 90%;
+	padding: 0 10px 0 0;
+	display: inline-block;
+	height: 29px;
+	line-height: 29px;
 }

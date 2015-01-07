@@ -15,25 +15,26 @@
     {% set formFieldLabels = craft.coalescentforms.getFormFieldLabels() %}
 
     <div class="formsDataFalse">Currently there are no form submissions.</div>
+    
     <div class="formsDataTrue">
+       <div class="select formSelect">
+        	<select id="formNameDropDown"></select>
+        </div>
+        
         <form id="csvForm" action="" accept-charset="UTF-8" method="post">
             {{ getCsrfInput() }}
             <input type="hidden" name="action" value="coalescentForms/downloadCsv" />
 
-            Download CSV
-            <select id="csvDropDown" name="formName"></select>
+            <label for="formName">Download CSV</label>
+            <div class="select">
+            	<select id="csvDropDown" name="formName"></select>
+            </div>
             <!-- formType value set before submit -->
-            <input type="hidden" id="csvFormType" name="formType" value="" />
-            <input type="submit" value="submit"/>
+            <input type="hidden" id="csvFormType" name="formType" value="">
+            <input type="submit" value="Submit" class="btn submit">
         </form>
 
-        <br/>
-
-        <select id="formNameDropDown"></select>
-
-        <br/>
-
-        <table id="tablesorter" class="tablesorter" >
+        <table id="tablesorter" class="tablesorter data fullwidth">
 
             <thead>
 
@@ -63,17 +64,19 @@
                     <td>{{row.firstName}}</td>
                     <td>{{row.lastName}}</td>
                     <td>{{row.email}}</td>
-                    <td><a class="deleteForm" href="#" data-id="{{row.id}}">delete</a></td>
+                    <td><a class="deleteForm" href="#" data-id="{{row.id}}">Delete</a></td>
                 </tr>
 
-                <tr class="tablesorter-childRow extraFields"><td colspan="6">
-                    <table>
-                    {% for key,value in row.fields %}
-                        {% set label = formFieldLabels[row.formType][key] %}
-                        <tr><td>{{label}}</td><td>{{value}}</td></tr>
-                    {% endfor %}
-                    </table>
-                </td></tr>
+                <tr class="tablesorter-childRow extraFields">
+	               <td colspan="6" class="extraFieldsCell">
+	                    <table class="extraFields">
+	                    {% for key,value in row.fields %}
+	                        {% set label = formFieldLabels[row.formType][key] %}
+	                        <tr><td class="label">{{label}}</td><td>{{value}}</td></tr>
+	                    {% endfor %}
+	                    </table>
+                	</td>
+                </tr>
             {% endfor %}
 
             </tbody>
