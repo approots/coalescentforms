@@ -90,6 +90,10 @@ class CoalescentFormsController extends BaseController
         $mainConfig = craft()->coalescentForms->getConfig(); //require dirname(dirname(__FILE__)) . '/config/main.php';
         $formType = craft()->request->getPost('formType');
 
+        // TODO validate even if snaptcha field not included in this form?
+        // TODO change form min submission time back after testing.
+        craft()->snaptcha->validate(true);
+
         // Get the custom fields from the config
         if (isset($mainConfig[$formType])) {
             // Get the standard form fields
