@@ -20,19 +20,57 @@ class CoalescentFormsService extends BaseApplicationComponent
         $model->setAttributes($attributes);
         return $model;
     }
+/*
+    public function getFormTypes()
+    {
+        $formType = null;
+        $formTypes = array();
+
+        $records = $this->coalescentFormsRecord->findAll(array(
+            'select'=>'t.formType',
+            'group'=>'t.formType',
+            'distinct'=>true,
+            'order'=>'t.formType'
+        ));
+
+        foreach($records as $record) {
+            $formTypes[] = $record["formType"];
+        }
+
+        return $formTypes;
+    }
+*/
 
     public function getAllForms()
     {
+        //$records = $this->coalescentFormsRecord->findAll(array('order'=>'t.dateUpdated DESC, t.formType'));
         $records = $this->coalescentFormsRecord->findAll(array('order'=>'t.dateUpdated DESC'));
         return CoalescentFormsModel::populateModels($records);
     }
 
+    /**
+     * TODO maybe just return the main config array as-is unless we add anything to that config array in the future?
+     * This method is currently redundant.
+     * @return array
+     */
     public function getConfig()
     {
         if (! $this->config) {
             $this->config = require dirname(dirname(__FILE__)) . '/config/main.php';
         }
         return $this->config;
+        /*
+        $fieldLabels = array();
+        $mainConfig = require dirname(dirname(__FILE__)) . '/config/main.php';
+        foreach ($mainConfig as $formType => $values) {
+            $fieldLabels[$formType] = array();
+            foreach ($values['fields'] as $valueKey => $valueLabel) {
+                $fieldLabels[$formType][$valueKey] = $valueLabel;
+            }
+        }
+
+        return $fieldLabels;
+        */
     }
 
     public function getFormFieldLabels($formType = null)
@@ -55,6 +93,31 @@ class CoalescentFormsService extends BaseApplicationComponent
         }
 
         return $fieldLabels;
+        /*
+        foreach ($mainConfig as $formType => $values) {
+            $fieldLabels[$formType] = array();
+
+            foreach ($values['fields'] as $fieldsKey => $fieldsValue) {
+                if (! empty($fieldsValue)) {
+                    if (is_array($fieldsValue)) {
+                        // Try to find and use the label field in the array
+                        if ($fieldsValue['label']) {
+                            $fieldLabels[$formType][$fieldsKey] = $fieldsValue['label'];
+                        }
+                    } else if ($fieldsValue) {
+                        // The field value is a string. Use it as the label.
+                        $fieldLabels[$formType][$fieldsKey] = $fieldsValue;
+                    }
+                }
+
+                // Couldn't find a label for this field, so use the field key.
+                if (! isset($fieldLabels[$formType][$fieldsKey])) {
+                    $fieldLabels[$formType][$fieldsKey] = $fieldsKey;
+                }
+            }
+
+        }
+            */
     }
 
     private function _getFieldLabels(array $fields)
@@ -88,6 +151,7 @@ class CoalescentFormsService extends BaseApplicationComponent
         if ($record = $this->coalescentFormsRecord->findByPk($id)) {
             return CoalescentFormsModel::populateModel($record);
         }
+
         return null;
     }
 
